@@ -1,0 +1,14 @@
+1) choose -> Default Project : RussianPost.Database in package manager console
+2) choose an apropriate project as Default Project: RussianPost.Server in the solution in order to apply migrations
+
+// add new migartion
+Add-Migration InitialCreate -Context RussianPostContext -OutputDir Migrations\RussianPostMigrations
+Update-Database -Context RussianPostContext
+
+// revert last migration. it will delete tabels from db
+Update-Database <previous migration name> -Context RussianPostContext
+
+// remove migartion from ef-snapshot
+Remove-Migration -Context RussianPostContext
+
+defaultValueSql: "NEWSEQUENTIALID()"
