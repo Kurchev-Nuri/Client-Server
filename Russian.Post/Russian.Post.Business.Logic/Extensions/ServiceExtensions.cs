@@ -2,6 +2,7 @@
 using Russian.Post.Business.Logic.Repositories.ClientMessages;
 using Russian.Post.Business.Logic.Repositories.ServerMessages;
 using Russian.Post.Business.Logic.Services.ClientMessages;
+using Russian.Post.Business.Logic.Services.LocalClientMessages;
 using Russian.Post.Business.Logic.Services.ServerMessages;
 
 namespace Russian.Post.Business.Logic.Extensions
@@ -21,7 +22,8 @@ namespace Russian.Post.Business.Logic.Extensions
         public static IServiceCollection AddPostClientBusinessLogic(this IServiceCollection services)
         {
             services.AddScoped<IClientMessagesService, ClientMessagesService>();
-            services.AddScoped<IClientMessagesRepository, ClientMessagesRepository>();
+            services.AddScoped<ILocalClientMessagesService, LocalClientMessagesService>();
+            services.AddScoped<ILocalClientMessagesRepository, LocalClientMessagesRepository>();
 
             return services;
         }

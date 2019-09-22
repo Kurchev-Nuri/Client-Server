@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 
 namespace Russian.Post.Business.Logic.Repositories.ClientMessages
 {
-    internal sealed class ClientMessagesRepository : BaseRepository<RussianPostContext, ClientMessage, PostClientMessage>, IClientMessagesRepository
+    internal sealed class LocalClientMessagesRepository : BaseRepository<RussianPostContext, ClientMessage, PostClientMessage>,
+                                                          ILocalClientMessagesRepository
     {
-        public ClientMessagesRepository(IMapper mapper, RussianPostContext context, IOptionsMonitor<RepositoryOptions> options) 
+        public LocalClientMessagesRepository(IMapper mapper, RussianPostContext context, IOptionsMonitor<RepositoryOptions> options) 
             : base(mapper, context, options)
         {
         }

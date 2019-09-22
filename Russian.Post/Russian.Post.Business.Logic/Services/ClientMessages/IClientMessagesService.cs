@@ -8,10 +8,10 @@ namespace Russian.Post.Business.Logic.Services.ClientMessages
 {
     public interface IClientMessagesService
     {
-        Task<IList<ClientMessage>> AllPendingMessages();
+        Task<PostResult> HandlePendingMessages();
 
-        Task<PostResult> MarkAsDelivered(int messageId);
+        Task<PostResult> SendNewMessage(AddMessageForm form);
 
-        Task<PostResult<ClientMessage>> AddMessage(AddMessageForm form);
+        Task<PostResult<IList<ClientMessage>>> AllDelivered();
     }
 }

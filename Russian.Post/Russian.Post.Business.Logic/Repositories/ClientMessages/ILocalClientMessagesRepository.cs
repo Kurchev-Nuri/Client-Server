@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Russian.Post.Business.Logic.Repositories.ClientMessages
 {
-    public interface IClientMessagesRepository : IRepository<ClientMessage, PostClientMessage>
+    public interface ILocalClientMessagesRepository : IRepository<ClientMessage, PostClientMessage>
     {
         Task<int> SaveChangesAsync();
     }

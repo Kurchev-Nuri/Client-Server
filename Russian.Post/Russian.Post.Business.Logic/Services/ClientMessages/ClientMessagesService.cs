@@ -1,61 +1,79 @@
-﻿using AutoMapper;
-using Russian.Post.Business.Logic.Repositories.ClientMessages;
-using Russian.Post.Business.Logic.Specifications.Client;
+﻿using Microsoft.Extensions.Options;
+using Russian.Post.Business.Logic.Services.LocalClientMessages;
 using Russian.Post.Common.Extensions;
+using Russian.Post.Common.HttpRequestService;
+using Russian.Post.Common.Options;
 using Russian.Post.Common.Results;
 using Russian.Post.Common.Validation.FluentValidator;
-using Russian.Post.Database.Models;
 using Russian.Post.Forms;
 using Russian.Post.Models;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Russian.Post.Business.Logic.Services.ClientMessages
 {
     internal sealed class ClientMessagesService : IClientMessagesService
     {
-        private readonly IMapper _mapper;
+        private readonly IRequestService _requestService;
         private readonly IFluentClientValidator _validator;
+        private readonly ILocalClientMessagesService _localMessages;
+        private readonly IOptionsMonitor<ApiEndpointOptions> _options;
 
-        public ClientMessagesService(IMapper mapper, IFluentClientValidator validator, IClientMessagesRepository repository)
+        public ClientMessagesService(IRequestService requestService,
+                                     IFluentClientValidator validator,
+                                     ILocalClientMessagesService messages,
+                                     IOptionsMonitor<ApiEndpointOptions> options)
         {
-            _mapper = mapper;
+            _options = options;
             _validator = validator;
-            MessagesRepository = repository;
+            _localMessages = messages;
+            _requestService = requestService;
         }
 
-        public IClientMessagesRepository MessagesRepository { get; }
+        private ApiEndpointOptions Options => _validator.ValidateAndThrow(_options.CurrentValue);
 
-        public async Task<PostResult<ClientMessage>> AddMessage(AddMessageForm form)
+        public Task<PostResult<IList<ClientMessage>>> AllDelivered()
+        {
+            return _requestService.MakeGetRequest<IList<ClientMessage>>(new Uri(Options.DeliveredUrl));
+        }
+
+        public async Task<PostResult> SendNewMessage(AddMessageForm form)
         {
             var validate = _validator.Validate(form);
             if (!validate.IsValid)
-                return validate.Errors.ConvertToAlgoError<ClientMessage>();
+                return validate.Errors.ConvertToAlgoError();
 
-            var message = await MessagesRepository.AddAsync(new PostClientMessage
-            {
-                Message = form.Message
-            });
-
+            var message = await _localMessages.AddMessage(form);
             if (!message.IsCorrect)
-                return message.ConvertErrorTo<ClientMessage>();
+                return message;
 
-            return _mapper.Map<PostResult<ClientMessage>>(message.Result);
+            var request = await _requestService.MakePostRequest<AddMessageForm, PostResult>(new Uri(Options.SendUrl), form);
+            if (!request.IsCorrect)
+                return request;
+
+            return PostResult.Default;
         }
 
-        public Task<IList<ClientMessage>> AllPendingMessages() => MessagesRepository.AllAsync(new ClientPendingMessagesSpecification());
-
-        public async Task<PostResult> MarkAsDelivered(int messageId)
+        public async Task<PostResult> HandlePendingMessages()
         {
-            var message = await MessagesRepository
-                .FirstOrDefaultAsync(new ClientMessageSpecification(messageId), trackable: true);
+            var messages = await _localMessages.AllPendingMessages();
+            if (!messages.Any())
+                return PostResult.Default;
 
-            if (message == null)
-                return PostResult.WithError(PostErrorCodes.EntityWasNotFound);
+            foreach (var value in messages)
+            {
+                var request = await _requestService.MakePostRequest<AddMessageForm, PostResult>(new Uri(Options.SendUrl), new AddMessageForm
+                {
+                    Message = value.Message
+                });
 
-            message.IsDelivered = true;
+                if (request.IsCorrect)
+                    await _localMessages.MarkAsDelivered(value.Id);
+            }
 
-            return await MessagesRepository.Update(message);
+            return PostResult.Default;
         }
     }
 }
