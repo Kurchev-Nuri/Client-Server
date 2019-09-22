@@ -39,7 +39,6 @@ namespace Russian.Post.Business.Logic.Repositories.Base
 
         protected abstract Task SaveAsync();
 
-
         public async Task<PostResult<TEntity>> AddAsync(TEntity entity)
         {
             if (entity == default)
@@ -71,7 +70,7 @@ namespace Russian.Post.Business.Logic.Repositories.Base
             return PostResult.Default;
         }
 
-        public async Task<IList<TEntity>> AllAsync(ISpecification<TEntity> specification, bool trackable = false)
+        public async Task<IList<TModel>> AllAsync(ISpecification<TEntity> specification, bool trackable = false)
         {
             var query = Context.Set<TEntity>()
                .AsQueryable();
@@ -82,9 +81,11 @@ namespace Russian.Post.Business.Logic.Repositories.Base
             query = specification.Includes.Aggregate(query, (querable, includeTo) => querable = includeTo(querable));
             query = specification.Orderes.Aggregate(query, (querable, includeTo) => querable = includeTo(querable));
 
-            return await query.Where(specification.Criteria)
+            var result = await query.Where(specification.Criteria)
                 .ToListAsync()
                 .ConfigureAwait(false);
+
+            return result.Select(Mapper.Map<TModel>).ToList();
         }
 
         public void Dispose()

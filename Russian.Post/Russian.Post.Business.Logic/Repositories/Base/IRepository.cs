@@ -13,6 +13,6 @@ namespace Russian.Post.Business.Logic.Repositories.Base
 
         Task<PostResult> DeletedAsync(ISpecification<TEntity> specification);
 
-        Task<IList<TEntity>> AllAsync(ISpecification<TEntity> specification, bool trackable = false);
+        Task<IList<TModel>> AllAsync(ISpecification<TEntity> specification, bool trackable = false);
     }
 }
