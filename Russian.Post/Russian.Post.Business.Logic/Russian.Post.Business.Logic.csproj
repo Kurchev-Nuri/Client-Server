@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Russian.Post.Common\Russian.Post.Common.csproj" />
+    <ProjectReference Include="..\Russian.Post.Database\Russian.Post.Database.csproj" />
+    <ProjectReference Include="..\Russian.Post.Models\Russian.Post.Models.csproj" />
+  </ItemGroup>
 
 </Project>
