@@ -9,6 +9,6 @@ namespace Russian.Post.Common.BackgroundProcessing
     {
         void RemoveRecurringJob(string jobId);
 
-        void RecurrentJob<T>(Expression<Func<T, Task>> methodCall, Action<RecurringOptions> action);
+        void RecurrentJob<T>(Expression<Func<T, Task>> methodCall, Action<RecurringOptions> action = default);
     }
 }

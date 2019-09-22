@@ -6,6 +6,8 @@ using Russian.Post.Common.Serializers;
 using Russian.Post.Common.Serializers.JsonSerializers;
 using Russian.Post.Common.Validation.Factories;
 using Russian.Post.Common.Validation.FluentValidator;
+using Russian.Post.Consts;
+using System;
 
 namespace Russian.Post.Common.Extensions
 {
@@ -20,7 +22,10 @@ namespace Russian.Post.Common.Extensions
             services.AddSingleton<IFluentClientValidator, FluentClientValidator>();
             services.AddSingleton<IBackgroundProcessor, HangfireBackgroundProcessor>();
 
-            services.AddScoped<IRequestService, RequestService>();
+            services.AddHttpClient<IRequestService, RequestService>().ConfigureHttpClient(u =>
+            {
+                u.BaseAddress = new Uri(CommonConsts.EndpointHost);
+            });
 
             return services;
         }

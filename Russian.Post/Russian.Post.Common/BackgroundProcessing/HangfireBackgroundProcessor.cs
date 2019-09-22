@@ -8,10 +8,10 @@ namespace Russian.Post.Common.BackgroundProcessing
 {
     internal sealed class HangfireBackgroundProcessor : IBackgroundProcessor
     {
-        public void RecurrentJob<T>(Expression<Func<T, Task>> methodCall, Action<RecurringOptions> action)
+        public void RecurrentJob<T>(Expression<Func<T, Task>> methodCall, Action<RecurringOptions> action = default)
         {
             var (recurringJobId, cronExpression) = Options(action);
-            RecurringJob.AddOrUpdate<T>(recurringJobId, methodCall, cronExpression);
+            RecurringJob.AddOrUpdate(recurringJobId, methodCall, cronExpression);
         }
 
         public void RemoveRecurringJob(string jobId) => RecurringJob.RemoveIfExists(jobId);

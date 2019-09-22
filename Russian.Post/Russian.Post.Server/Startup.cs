@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Russian.Post.Business.Logic.Configurations.Mapper;
@@ -63,6 +58,9 @@ namespace Russian.Post.Server
             services.AddFormValidators();
             services.AddPostCommonSrevices();
             services.AddPostServerBusinessLogic();
+
+            //
+            services.AddHangfire(opt => opt.UseSqlServerStorage(Configuration.GetConnectionString(DatabaseConsts.HangfireConnectionString)));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -72,6 +70,11 @@ namespace Russian.Post.Server
                 app.UseDeveloperExceptionPage();
             }
 
+            //
+            app.UseHangfireServer();
+            app.UseHangfireDashboard();
+
+            //
             app.UseMvcWithDefaultRoute();
         }
     }
