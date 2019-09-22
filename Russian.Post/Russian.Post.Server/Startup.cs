@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Russian.Post.Business.Logic.Configurations.Mapper;
 using Russian.Post.Consts;
 using Russian.Post.Database.Extensions;
 
@@ -46,6 +48,7 @@ namespace Russian.Post.Server
 
             //
             services.AddOptions();
+            services.AddAutoMapper(config => config.AddProfile<RussianPostModelsProfile>(), typeof(RussianPostModelsProfile).Assembly);
 
             //
             services.AddRussianPostDataBase(opt =>
