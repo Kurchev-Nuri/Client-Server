@@ -6,7 +6,7 @@ namespace Russian.Post.Business.Logic.Specifications.Client
     internal sealed class ClientPendingMessagesSpecification : BaseSpecification<PostClientMessage>
     {
         public ClientPendingMessagesSpecification()
-            : base(message => !message.IsDeleted && message.IsDelivered)
+            : base(message => !message.IsDeleted && !message.IsDelivered)
         {
         }
     }

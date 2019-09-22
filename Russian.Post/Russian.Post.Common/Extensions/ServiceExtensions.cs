@@ -22,9 +22,10 @@ namespace Russian.Post.Common.Extensions
             services.AddSingleton<IFluentClientValidator, FluentClientValidator>();
             services.AddSingleton<IBackgroundProcessor, HangfireBackgroundProcessor>();
 
-            services.AddHttpClient<IRequestService, RequestService>().ConfigureHttpClient(u =>
+            services.AddHttpClient<IRequestService, RequestService>().ConfigureHttpClient(client =>
             {
-                u.BaseAddress = new Uri(CommonConsts.EndpointHost);
+                client.Timeout = new TimeSpan(0, 0, 30);
+                client.BaseAddress = new Uri(CommonConsts.EndpointHost);
             });
 
             return services;

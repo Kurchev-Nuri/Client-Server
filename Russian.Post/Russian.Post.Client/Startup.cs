@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Russian.Post.Business.Logic.Configurations.Mapper;
 using Russian.Post.Business.Logic.Extensions;
+using Russian.Post.Client.Workers;
 using Russian.Post.Common.Extensions;
 using Russian.Post.Common.Options;
 using Russian.Post.Consts;
@@ -27,6 +30,7 @@ namespace Russian.Post.Client
         {
             //
             services.AddOptions();
+            services.AddAutoMapper(config => config.AddProfile<RussianPostModelsProfile>(), typeof(RussianPostModelsProfile).Assembly);
 
             //
             services.AddRussianPostDataBase(opt =>
@@ -39,6 +43,10 @@ namespace Russian.Post.Client
             services.AddPostCommonSrevices();
             services.AddPostClientBusinessLogic();
 
+            //
+            services.AddScoped<ClientMessageWorker>();
+
+            //
             services.Configure<ApiEndpointOptions>(Configuration.GetSection(nameof(ApiEndpointOptions)));
         }
     }

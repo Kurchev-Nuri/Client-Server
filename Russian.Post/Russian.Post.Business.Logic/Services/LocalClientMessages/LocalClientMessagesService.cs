@@ -40,7 +40,7 @@ namespace Russian.Post.Business.Logic.Services.LocalClientMessages
             if (!message.IsCorrect)
                 return message.ConvertErrorTo<ClientMessage>();
 
-            return _mapper.Map<PostResult<ClientMessage>>(message.Result);
+            return new PostResult<ClientMessage>(_mapper.Map<ClientMessage>(message.Result));
         }
 
         public Task<IList<ClientMessage>> AllPendingMessages() => MessagesRepository.AllAsync(new ClientPendingMessagesSpecification());

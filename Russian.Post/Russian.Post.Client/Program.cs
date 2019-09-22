@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Russian.Post.Business.Logic.Services.ClientMessages;
 using Russian.Post.Client.Options;
+using Russian.Post.Client.Workers;
 using Russian.Post.Common.BackgroundProcessing;
 using Russian.Post.Consts;
 using System;
@@ -35,9 +36,10 @@ namespace Russian.Post.Client
                 using (var server = new BackgroundJobServer(options))
                 {
                     HandleRecurringJob(provider);
+                    Console.WriteLine("Client started!");
 
-                    Console.WriteLine("Hangfire Server started. Press any key to exit...");
-                    Console.ReadKey();
+                    provider.GetRequiredService<ClientMessageWorker>()
+                        .DoWork();
                 }
             }
         }

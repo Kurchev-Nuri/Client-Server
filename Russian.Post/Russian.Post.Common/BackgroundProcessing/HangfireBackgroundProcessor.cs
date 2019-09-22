@@ -18,11 +18,11 @@ namespace Russian.Post.Common.BackgroundProcessing
 
         private static (string, Func<string>) Options(Action<RecurringOptions> action)
         {
+            if (action == null)
+                return ("Default-Not-Delivered-Job", Cron.Minutely);
+
             var options = new RecurringOptions();
             action?.Invoke(options);
-
-            if (options == null)
-                return ("Default-Not-Delivered-Job", Cron.Minutely);
 
             return (options.RecurringJobId, () => options.Cron);
         }
