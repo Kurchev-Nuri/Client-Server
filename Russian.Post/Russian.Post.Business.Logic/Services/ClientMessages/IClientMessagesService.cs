@@ -12,6 +12,6 @@ namespace Russian.Post.Business.Logic.Services.ClientMessages
 
         Task<PostResult> SendNewMessage(AddMessageForm form);
 
-        Task<PostResult<IList<ClientMessage>>> AllDelivered();
+        Task<PostResult<IList<ServerMessage>>> AllDelivered();
     }
 }

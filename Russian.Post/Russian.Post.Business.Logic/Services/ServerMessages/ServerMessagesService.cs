@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Russian.Post.Business.Logic.Repositories.ServerMessages;
 using Russian.Post.Business.Logic.Specifications.Server;
 using Russian.Post.Common.Extensions;
@@ -27,11 +28,11 @@ namespace Russian.Post.Business.Logic.Services.ServerMessages
 
         public IServerMessagesRepository MessagesRepository { get; }
 
-        public async Task<PostResult> AddMessage(AddMessageForm form)
+        public async Task<PostResult<ServerMessage>> AddMessage(AddMessageForm form)
         {
             var validate = _validator.Validate(form);
             if (!validate.IsValid)
-                return validate.Errors.ConvertToAlgoError<PostResult>();
+                return validate.Errors.ConvertToAlgoError<ServerMessage>();
 
             var ipAddress = _contextAccessor.HttpContext.Request.Host.ToString();
 

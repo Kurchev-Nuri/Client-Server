@@ -32,15 +32,10 @@ namespace Russian.Post.Business.Logic.Services.LocalClientMessages
             if (!validate.IsValid)
                 return validate.Errors.ConvertToAlgoError<ClientMessage>();
 
-            var message = await MessagesRepository.AddAsync(new PostClientMessage
+            return await MessagesRepository.AddAsync(new PostClientMessage
             {
                 Message = form.Message
             });
-
-            if (!message.IsCorrect)
-                return message.ConvertErrorTo<ClientMessage>();
-
-            return new PostResult<ClientMessage>(_mapper.Map<ClientMessage>(message.Result));
         }
 
         public Task<IList<ClientMessage>> AllPendingMessages() => MessagesRepository.AllAsync(new ClientPendingMessagesSpecification());

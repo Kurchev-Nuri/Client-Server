@@ -34,9 +34,9 @@ namespace Russian.Post.Business.Logic.Services.ClientMessages
 
         private ApiEndpointOptions Options => _validator.ValidateAndThrow(_options.CurrentValue);
 
-        public Task<PostResult<IList<ClientMessage>>> AllDelivered()
+        public Task<PostResult<IList<ServerMessage>>> AllDelivered()
         {
-            return _requestService.MakeGetRequest<IList<ClientMessage>>(new Uri(Options.DeliveredUrl));
+            return _requestService.MakeGetRequest<IList<ServerMessage>>(Options.DeliveredUrl);
         }
 
         public async Task<PostResult> SendNewMessage(AddMessageForm form)
@@ -49,9 +49,12 @@ namespace Russian.Post.Business.Logic.Services.ClientMessages
             if (!message.IsCorrect)
                 return message;
 
-            var request = await _requestService.MakePostRequest<AddMessageForm, PostResult>(new Uri(Options.SendUrl), form);
+            var request = await _requestService.MakePostRequest<AddMessageForm, ServerMessage>(Options.SendUrl, form);
             if (!request.IsCorrect)
                 return request;
+
+            if (request.IsCorrect)
+                await _localMessages.MarkAsDelivered(message.Result.Id);
 
             return PostResult.Default;
         }
@@ -64,7 +67,7 @@ namespace Russian.Post.Business.Logic.Services.ClientMessages
 
             foreach (var value in messages)
             {
-                var request = await _requestService.MakePostRequest<AddMessageForm, PostResult>(new Uri(Options.SendUrl), new AddMessageForm
+                var request = await _requestService.MakePostRequest<AddMessageForm, ServerMessage>(Options.SendUrl, new AddMessageForm
                 {
                     Message = value.Message
                 });

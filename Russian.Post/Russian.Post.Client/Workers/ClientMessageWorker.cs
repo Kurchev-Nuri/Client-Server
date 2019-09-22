@@ -1,9 +1,6 @@
 ﻿using Russian.Post.Business.Logic.Services.ClientMessages;
 using Russian.Post.Forms;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Russian.Post.Client.Workers
 {
@@ -24,25 +21,48 @@ namespace Russian.Post.Client.Workers
                 var message = Console.ReadLine();
                 if (string.Equals(message, "print", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-
                     var messages = _client.AllDelivered().Result;
-                    foreach (var result in messages.Result)
-                        Console.WriteLine(result.Message);
+                    if (messages.IsCorrect)
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
 
-                    Console.ResetColor();
+                        foreach (var result in messages.Result)
+                            Console.WriteLine($" Message: {result.Message}  IP-Address: {result.IpAddress}  Date: {result.CreatedAt}");
+
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        HandleErrors($"A network-related error has occurred. Error: {messages.Error.Message}");
+                    }
                 }
                 else
                 {
                     var result = _client.SendNewMessage(new AddMessageForm { Message = message }).Result;
                     if (!result.IsCorrect)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"A new message has not been sent. Error: {result.Error.Message}");
+                        HandleErrors($"A new message has not been sent. Error: {result.Error.Message}");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
+                        Console.WriteLine($"   Message: {message} has been successfully delivered.");
                         Console.ResetColor();
                     }
                 }
+
+                Console.WriteLine();
+                Console.WriteLine("Press eny key to continue ...");
+                Console.WriteLine("Press 'q' to quit ... ");
+                exit = Console.ReadKey();
             }
+        }
+
+        private static void HandleErrors(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.ResetColor();
         }
     }
 }

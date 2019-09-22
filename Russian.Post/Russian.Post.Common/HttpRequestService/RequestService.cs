@@ -1,5 +1,4 @@
-﻿using Russian.Post.Common.Extensions;
-using Russian.Post.Common.Results;
+﻿using Russian.Post.Common.Results;
 using Russian.Post.Common.Serializers;
 using Russian.Post.Consts;
 using System;
@@ -22,34 +21,33 @@ namespace Russian.Post.Common.HttpRequestService
             _serializer = serializer;
         }
 
-        public Task<PostResult<TResponse>> MakeGetRequest<TResponse>(Uri uri) => MakeRequestPure<string, TResponse>(uri, HttpMethod.Get);
+        public Task<PostResult<TResponse>> MakeGetRequest<TResponse>(string uri) => MakeRequestPure<string, TResponse>(uri, HttpMethod.Get);
 
-        public Task<PostResult<TResponse>> MakeGetRequest<TRequest, TResponse>(Uri uri, TRequest parameters = default)
-        {
-            var uriBuilder = new UriBuilder(uri)
-               .AttachQuery(parameters);
-
-            return MakeRequestPure<TRequest, TResponse>(uriBuilder.Uri, HttpMethod.Get);
-        }
-
-        public Task<PostResult<TResponse>> MakePostRequest<TRequest, TResponse>(Uri uri, TRequest content = default)
+        public Task<PostResult<TResponse>> MakePostRequest<TRequest, TResponse>(string uri, TRequest content = default)
         {
             return MakeRequestPure<TRequest, TResponse>(uri, HttpMethod.Post, content);
         }
 
-        private async Task<PostResult<TResponse>> MakeRequestPure<TRequest, TResponse>(Uri uri, HttpMethod method, TRequest content = default)
+        private async Task<PostResult<TResponse>> MakeRequestPure<TRequest, TResponse>(string uri, HttpMethod method, TRequest content = default)
         {
             using (var request = new HttpRequestMessage(method, uri))
             {
                 FillBody(request, content);
 
-                using (var response = await _client.SendAsync(request))
+                try
                 {
-                    if (response.StatusCode != HttpStatusCode.OK)
-                        return PostResult<TResponse>.WithError(PostErrorCodes.RemoteRequestIsFailed);
+                    using (var response = await _client.SendAsync(request))
+                    {
+                        if (response.StatusCode != HttpStatusCode.OK)
+                            return PostResult<TResponse>.WithError(PostErrorCodes.RemoteRequestIsFailed);
 
-                    var result = await response.Content.ReadAsStringAsync();
-                    return new PostResult<TResponse>(_serializer.Deserialize<TResponse>(result));
+                        var result = await response.Content.ReadAsStringAsync();
+                        return _serializer.Deserialize<PostResult<TResponse>>(result);
+                    }
+                }
+                catch (Exception)
+                {
+                    return PostResult<TResponse>.WithError(PostErrorCodes.RemoteRequestIsFailed);
                 }
             }
         }

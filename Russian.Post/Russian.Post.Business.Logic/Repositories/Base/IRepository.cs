@@ -9,7 +9,7 @@ namespace Russian.Post.Business.Logic.Repositories.Base
     public interface IRepository<TModel, TEntity>
         where TEntity : class, IDeletedModel
     {
-        Task<PostResult<TEntity>> AddAsync(TEntity entity);
+        Task<PostResult<TModel>> AddAsync(TEntity entity);
 
         Task<PostResult<TEntity>> Update(TEntity entity);
 

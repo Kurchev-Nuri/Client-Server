@@ -39,10 +39,10 @@ namespace Russian.Post.Business.Logic.Repositories.Base
 
         protected abstract Task SaveAsync();
 
-        public async Task<PostResult<TEntity>> AddAsync(TEntity entity)
+        public async Task<PostResult<TModel>> AddAsync(TEntity entity)
         {
             if (entity == default)
-                return PostResult<TEntity>.WithError(PostErrorCodes.InvalidInput);
+                return PostResult<TModel>.WithError(PostErrorCodes.InvalidInput);
 
             var result = Context.Set<TEntity>()
                 .Add(entity);
@@ -50,7 +50,7 @@ namespace Russian.Post.Business.Logic.Repositories.Base
             if (Options.AutoSaveEnabled)
                 await SaveAsync();
 
-            return new PostResult<TEntity>(result.Entity);
+            return new PostResult<TModel>(Mapper.Map<TModel>(result.Entity));
         }
 
         public async Task<PostResult> DeletedAsync(ISpecification<TEntity> specification)
