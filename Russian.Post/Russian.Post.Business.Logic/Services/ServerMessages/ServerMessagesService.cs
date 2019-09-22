@@ -9,7 +9,6 @@ using Russian.Post.Forms;
 using Russian.Post.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Russian.Post.Business.Logic.Services.ServerMessages
@@ -45,6 +44,5 @@ namespace Russian.Post.Business.Logic.Services.ServerMessages
         }
 
         public Task<IList<ServerMessage>> AllMessages() => MessagesRepository.AllAsync(new ServerMessagesSpecification());
-
     }
 }

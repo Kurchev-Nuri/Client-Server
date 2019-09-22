@@ -11,8 +11,12 @@ namespace Russian.Post.Business.Logic.Repositories.Base
     {
         Task<PostResult<TEntity>> AddAsync(TEntity entity);
 
+        Task<PostResult<TEntity>> Update(TEntity entity);
+
         Task<PostResult> DeletedAsync(ISpecification<TEntity> specification);
 
         Task<IList<TModel>> AllAsync(ISpecification<TEntity> specification, bool trackable = false);
+
+        Task<TEntity> FirstOrDefaultAsync(ISpecification<TEntity> specification, bool trackable = false);
     }
 }

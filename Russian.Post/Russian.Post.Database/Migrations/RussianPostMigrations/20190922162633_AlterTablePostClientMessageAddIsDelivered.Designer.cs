@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Russian.Post.Database.Contexts;
 
 namespace Russian.Post.Database.Migrations.RussianPostMigrations
 {
     [DbContext(typeof(RussianPostContext))]
-    partial class RussianPostContextModelSnapshot : ModelSnapshot
+    [Migration("20190922162633_AlterTablePostClientMessageAddIsDelivered")]
+    partial class AlterTablePostClientMessageAddIsDelivered
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

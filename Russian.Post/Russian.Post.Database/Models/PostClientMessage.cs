@@ -14,6 +14,8 @@ namespace Russian.Post.Database.Models
 
         public int AttemptCount { get; set; }
 
+        public bool IsDelivered { get; set; }
+
         public bool IsDeleted { get; set; }
     }
 }

@@ -88,6 +88,33 @@ namespace Russian.Post.Business.Logic.Repositories.Base
             return result.Select(Mapper.Map<TModel>).ToList();
         }
 
+        public async Task<PostResult<TEntity>> Update(TEntity entity)
+        {
+            if (entity == default)
+                return PostResult<TEntity>.WithError(PostErrorCodes.InvalidInput);
+
+            Context.Entry(entity).State = EntityState.Modified;
+
+            if (Options.AutoSaveEnabled)
+                await SaveAsync();
+
+            return new PostResult<TEntity>(entity);
+        }
+
+        public async Task<TEntity> FirstOrDefaultAsync(ISpecification<TEntity> specification, bool trackable = false)
+        {
+            var query = Context.Set<TEntity>()
+                .AsQueryable();
+
+            if (!trackable)
+                query = query.AsNoTracking();
+
+            query = specification.Includes.Aggregate(query, (querable, includeTo) => querable = includeTo(querable));
+
+            return await query.FirstOrDefaultAsync(specification.Criteria)
+                .ConfigureAwait(false);
+        }
+
         public void Dispose()
         {
             Dispose(true);
