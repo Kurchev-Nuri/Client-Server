@@ -13,8 +13,11 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Russian.Post.Business.Logic.Configurations.Mapper;
+using Russian.Post.Business.Logic.Extensions;
+using Russian.Post.Common.Extensions;
 using Russian.Post.Consts;
 using Russian.Post.Database.Extensions;
+using Russian.Post.Forms.Extensions;
 
 namespace Russian.Post.Server
 {
@@ -55,6 +58,11 @@ namespace Russian.Post.Server
             {
                 opt.ConnectionString = Configuration.GetConnectionString(DatabaseConsts.PostConnectionString);
             });
+
+            //
+            services.AddFormValidators();
+            services.AddPostCommonSrevices();
+            services.AddPostServerBusinessLogic();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

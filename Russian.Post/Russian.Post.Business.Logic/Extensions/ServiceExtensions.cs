@@ -10,6 +10,8 @@ namespace Russian.Post.Business.Logic.Extensions
     {
         public static IServiceCollection AddPostServerBusinessLogic(this IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
+
             services.AddScoped<IServerMessagesService, ServerMessagesService>();
             services.AddScoped<IServerMessagesRepository, ServerMessagesRepository>();
 

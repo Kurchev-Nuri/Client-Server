@@ -21,6 +21,7 @@ namespace Russian.Post.Server
                     config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
                     config.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
                 })
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .UseKestrel();
     }
 }
