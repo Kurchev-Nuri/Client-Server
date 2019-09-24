@@ -7,7 +7,6 @@ using Russian.Post.Common.Results;
 using Russian.Post.Common.Validation.FluentValidator;
 using Russian.Post.Forms;
 using Russian.Post.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -55,6 +54,8 @@ namespace Russian.Post.Business.Logic.Services.ClientMessages
 
             if (request.IsCorrect)
                 await _localMessages.MarkAsDelivered(message.Result.Id);
+            else
+                await _localMessages.IncrementAttempt(message.Result.Id);
 
             return PostResult.Default;
         }
@@ -74,6 +75,8 @@ namespace Russian.Post.Business.Logic.Services.ClientMessages
 
                 if (request.IsCorrect)
                     await _localMessages.MarkAsDelivered(value.Id);
+                else
+                    await _localMessages.IncrementAttempt(value.Id);
             }
 
             return PostResult.Default;

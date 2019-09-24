@@ -12,6 +12,8 @@ namespace Russian.Post.Business.Logic.Services.LocalClientMessages
 
         Task<PostResult> MarkAsDelivered(int messageId);
 
+        Task<PostResult> IncrementAttempt(int messageId);
+
         Task<PostResult<ClientMessage>> AddMessage(AddMessageForm form);
     }
 }

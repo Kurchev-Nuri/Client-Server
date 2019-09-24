@@ -52,5 +52,18 @@ namespace Russian.Post.Business.Logic.Services.LocalClientMessages
 
             return await MessagesRepository.Update(message);
         }
+
+        public async Task<PostResult> IncrementAttempt(int messageId)
+        {
+            var message = await MessagesRepository
+            .FirstOrDefaultAsync(new ClientMessageSpecification(messageId), trackable: true);
+
+            if (message == null)
+                return PostResult.WithError(PostErrorCodes.EntityWasNotFound);
+
+            message.AttemptCount++;
+
+            return await MessagesRepository.Update(message);
+        }
     }
 }
